@@ -1,10 +1,15 @@
-import React from 'react';
-import {Text, View} from 'react-native';
+import * as React from 'react';
+import { SafeAreaView } from 'react-native';
+import { LoginScreen } from './src/screens/LoginScreen';
 
 export const App = () => {
   return (
-    <View>
-      <Text>App</Text>
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <LoginScreen />
+    </SafeAreaView>
   );
+};
+
+const styles = {
+  safeArea: { flex: 1 },
 };
