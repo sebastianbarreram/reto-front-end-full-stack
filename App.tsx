@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SafeAreaView } from 'react-native';
 import { LoginScreen } from './src/screens/LoginScreen';
 
-export const App = () => {
+const App = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <LoginScreen />
@@ -13,3 +13,5 @@ export const App = () => {
 const styles = {
   safeArea: { flex: 1 },
 };
+
+export default App;
