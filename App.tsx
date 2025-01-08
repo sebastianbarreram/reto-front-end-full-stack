@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { SafeAreaView } from 'react-native';
-import { LoginScreen } from './src/screens/LoginScreen';
+import RootStack from './src/navigation/RootStack';
+import { NavigationContainer } from '@react-navigation/native';
 
 const App = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <LoginScreen />
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
     </SafeAreaView>
   );
 };
