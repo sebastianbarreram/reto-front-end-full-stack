@@ -4,7 +4,7 @@ import { UserInterface } from './interfaces/userInterface';
 export const useUser = () => {
   const getUserByEmail = async (
     email: string,
-  ): Promise<UserInterface | undefined> => {
+  ): Promise<[UserInterface] | undefined> => {
     try {
       const url = `${SUPABASE_URL}/Users?email=eq.${email}&select=*`;
       console.log(

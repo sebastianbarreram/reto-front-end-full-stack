@@ -1,25 +1,56 @@
+import {
+  Text,
+  View,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import Logo from '../components/Logo';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useUser } from '../hooks/useUser';
+import { setUser } from '../redux/slices/UserSlice';
 import { globalStyles } from '../styles/global-styles';
+import { AppDispatch } from '../redux/storage/configStore';
 import InputTextContainer from '../components/InputTextContainer';
 import { MyStackScreenProps } from '../interfaces/MyStackScreenProps';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
   const { getUserByEmail } = useUser();
+  const dispatch = useDispatch<AppDispatch>();
+
   const login = async () => {
+    setLoading(true);
     try {
       console.log('Login');
       getUserByEmail(emailInput)
-        .then(getUserByEmailResponse => {
+        .then(async getUserByEmailResponse => {
           console.log('getUserByEmailResponse', getUserByEmailResponse);
+          if (getUserByEmailResponse) {
+            const user = getUserByEmailResponse[0];
+            if (user) {
+              const isPasswordValid = passwordInput === user.password_hash;
+              console.log('isPasswordValid :>> ', isPasswordValid);
+              console.log('passwordInput :>> ', passwordInput);
+              if (isPasswordValid) {
+                dispatch(setUser(user));
+                navigation.navigate('Tasks');
+              }
+            } else {
+              Alert.alert(
+                'Sorry, you email or password is incorrect. Please try again',
+              );
+            }
+          }
         })
-        .catch((error: unknown) => {
+        .catch(error => {
           console.error('error getUserByEmail:>> ', error);
-          Alert.alert('We have problems applying for loan');
+          Alert.alert('We have problems to login. Please try again');
+        })
+        .finally(() => {
+          setLoading(false);
         });
-      navigation.navigate('Tasks');
     } catch (err) {
       Alert.alert(
         'Login error',
@@ -27,38 +58,11 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
       );
     }
   };
-  //   const login = () => {
-  //     if (emailInput === '' || passwordInput === '') {
-  //       Alert.alert('Please fill in all fields');
-  //       return;
-  //     }
-  //     // Here you would typically make an API call to your backend to log in the user
-  //     // For example:
-  //     // fetch('https://yourapi.com/login', {
-  //     //   method: 'POST',
-  //     //   headers: {
-  //     //     'Content-Type': 'application/json',
-  //     //   },
-  //     //   body: JSON.stringify({ email: emailInput, password: passwordInput }),
-  //     // })
-  //     // .then(response => response.json())
-  //     // .then(data => {
-  //     //   if (data.success) {
-  //     //     // Handle successful login
-  //     //   } else {
-  //     //     // Handle login failure
-  //     //   }
-  //     // })
-  //     // .catch(error => {
-  //     //   console.error('Error:', error);
-  //     // });
 
-  //     console.log('Email:', emailInput);
-  //     console.log('Password:', passwordInput);
-  //     Alert.alert('Login function called');
-  //   };
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [loading, setLoading] = useState(false);
+
   return (
     <View>
       <View style={globalStyles().mainContainer}>
@@ -79,14 +83,18 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
           <InputTextContainer
             style={styles.passwordInputContainer}
             iconName="lock-open"
-            placeHolder="New password"
+            placeHolder="Password"
             type="password"
             handleOnChange={setPasswordInput}
             value={passwordInput}
           />
-          <TouchableOpacity style={styles.button} onPress={() => login()}>
-            <Text style={styles.buttonText}>LOGIN</Text>
-          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator size="large" color="#00ced1" />
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={() => login()}>
+              <Text style={styles.buttonText}>LOGIN</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('SignUp');

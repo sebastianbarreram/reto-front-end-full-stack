@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { SafeAreaView } from 'react-native';
 import RootStack from './src/navigation/RootStack';
 import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import { ConfigStorage } from './src/redux/storage/configStore';
 
 const App = () => {
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <Provider store={ConfigStorage}>
       <NavigationContainer>
         <RootStack />
       </NavigationContainer>
-    </SafeAreaView>
+    </Provider>
   );
-};
-
-const styles = {
-  safeArea: { flex: 1 },
 };
 
 export default App;

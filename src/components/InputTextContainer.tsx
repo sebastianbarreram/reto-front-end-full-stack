@@ -8,7 +8,7 @@ import {
   NativeSyntheticEvent,
   TextInputEndEditingEventData,
 } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconComunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import usePasswordVisibility from '../hooks/usePasswordVisibility';
@@ -36,7 +36,6 @@ const InputTextContainer = ({
 }: Props) => {
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     usePasswordVisibility();
-  const [password, setPassword] = useState('');
   let textInput;
   if (type === 'text') {
     textInput = (
@@ -59,7 +58,8 @@ const InputTextContainer = ({
           autoCapitalize="none"
           secureTextEntry={passwordVisibility}
           textContentType={'password'}
-          onChangeText={text => setPassword(text)}
+          onChangeText={handleOnChange}
+          onEndEditing={validateInput}
         />
         <Pressable onPress={handlePasswordVisibility}>
           <IconComunity name={rightIcon} size={22} color="#232323" />

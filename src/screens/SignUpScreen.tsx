@@ -9,9 +9,9 @@ export const SignUpScreen = ({ navigation }: MyStackScreenProps) => {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
-  const handleRegister = () => {
+  const handleSignUp = () => {
     // Add your registration logic here
-    console.log('Register button pressed');
+    console.log('Sign up button pressed');
   };
 
   return (
@@ -34,13 +34,13 @@ export const SignUpScreen = ({ navigation }: MyStackScreenProps) => {
           <InputTextContainer
             style={styles.passwordInputContainer}
             iconName="lock-open"
-            placeHolder="New password"
+            placeHolder="Password"
             type="password"
             handleOnChange={setPasswordInput}
             value={passwordInput}
           />
-          <TouchableOpacity style={styles.button} onPress={() => login()}>
-            <Text style={styles.buttonText}>LOGIN</Text>
+          <TouchableOpacity style={styles.button} onPress={() => handleSignUp()}>
+            <Text style={styles.buttonText}>SIGN UP</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
