@@ -6,8 +6,8 @@ interface Props {
 
 export const styles = ({ color = '#1554F7' }: Props) =>
   StyleSheet.create({
-    transaction: {
-      // backgroundColor: '#f9c2ff',
+    task: {
+      backgroundColor: '#f9c2ff',
       padding: 5,
       marginVertical: 8,
       marginHorizontal: 16,

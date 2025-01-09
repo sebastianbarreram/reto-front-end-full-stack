@@ -1,6 +1,6 @@
 import { Image } from 'react-native';
 import React from 'react';
-import { styles } from '../themes/WalletTheme';
+import { styles } from '../themes/GlobalTheme';
 
 interface Props {
   size?: number;

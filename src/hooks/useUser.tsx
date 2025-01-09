@@ -1,5 +1,6 @@
 import { SUPABASE_URL, SUPABASE_KEY } from '@env';
-import { UserInterface } from './interfaces/userInterface';
+import { UserInterface } from '../interfaces/UserInterface';
+import { TaskInterface } from '../interfaces/TaskInterface';
 
 export const useUser = () => {
   const getUserByEmail = async (
@@ -7,12 +8,6 @@ export const useUser = () => {
   ): Promise<[UserInterface] | undefined> => {
     try {
       const url = `${SUPABASE_URL}/Users?email=eq.${email}&select=*`;
-      console.log(
-        'url',
-        url,
-        'process.env.SUPABASE_KEY: ',
-        process.env.SUPABASE_KEY,
-      );
       const response: Response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${SUPABASE_KEY}`,
@@ -25,5 +20,24 @@ export const useUser = () => {
       console.error('Error fetching user:', error);
     }
   };
-  return { getUserByEmail };
+
+  const getUserTasks = async (
+    id: string,
+  ): Promise<[TaskInterface] | undefined> => {
+    try {
+      const url = `${SUPABASE_URL}/Tasks?id_user=eq.${id}&select=*`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          apikey: `${SUPABASE_KEY}`,
+        },
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
+
+  return { getUserByEmail, getUserTasks };
 };
