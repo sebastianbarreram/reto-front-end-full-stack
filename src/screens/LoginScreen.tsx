@@ -1,67 +1,37 @@
-import {
-  Text,
-  View,
-  Alert,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
 import Logo from '../components/Logo';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useUser } from '../hooks/useUser';
-import { setUser } from '../redux/slices/UserSlice';
+import { useAuth } from '../hooks/useAuth';
 import { globalStyles } from '../styles/global-styles';
-import { AppDispatch } from '../redux/storage/configStore';
+import LoadingIndicator from '../components/LoadingIndicator';
+import { useEmailValidation } from '../hooks/useEmailValidation';
 import InputTextContainer from '../components/InputTextContainer';
 import { MyStackScreenProps } from '../interfaces/MyStackScreenProps';
+import { Text, View, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 
 export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
-  const { getUserByEmail } = useUser();
-  const dispatch = useDispatch<AppDispatch>();
+  const { login, loading } = useAuth();
+  const { errorMessage, validateEmail } = useEmailValidation();
 
-  const login = async () => {
-    setLoading(true);
+  const handleLogin = async () => {
     try {
-      console.log('Login');
-      getUserByEmail(emailInput)
-        .then(async getUserByEmailResponse => {
-          console.log('getUserByEmailResponse', getUserByEmailResponse);
-          if (getUserByEmailResponse) {
-            const user = getUserByEmailResponse[0];
-            if (user) {
-              const isPasswordValid = passwordInput === user.password_hash;
-              console.log('isPasswordValid :>> ', isPasswordValid);
-              console.log('passwordInput :>> ', passwordInput);
-              if (isPasswordValid) {
-                dispatch(setUser(user));
-                navigation.navigate('Tasks');
-              }
-            } else {
-              Alert.alert(
-                'Sorry, you email or password is incorrect. Please try again',
-              );
-            }
-          }
-        })
-        .catch(error => {
-          console.error('error getUserByEmail:>> ', error);
-          Alert.alert('We have problems to login. Please try again');
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } catch (err) {
+      await login(emailInput, passwordInput, navigation);
+    } catch (error) {
       Alert.alert(
         'Login error',
-        'An unexpected error ocurred. Please try logging in again',
+        (error as any).message || 'An unexpected error occurred. Please try logging in again',
       );
     }
   };
 
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const handleEmailChange = (email: string) => {
+    setEmailInput(email);
+    validateEmail(email);
+  };
+
+  const isFormValid = emailInput && passwordInput && !errorMessage;
 
   return (
     <View>
@@ -77,7 +47,7 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
             style={styles.textContainer}
             iconName="person"
             placeHolder="Email"
-            handleOnChange={setEmailInput}
+            handleOnChange={handleEmailChange}
             value={emailInput}
           />
           <InputTextContainer
@@ -88,16 +58,22 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
             handleOnChange={setPasswordInput}
             value={passwordInput}
           />
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          ) : null}
           {loading ? (
-            <ActivityIndicator size="large" color="#00ced1" />
+            <LoadingIndicator />
           ) : (
-            <TouchableOpacity style={styles.button} onPress={() => login()}>
+            <TouchableOpacity
+              style={[styles.button, !isFormValid && styles.buttonDisabled]}
+              onPress={() => handleLogin()}
+              disabled={!isFormValid}>
               <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('SignUp');
+              navigation.navigate('SignUpScreen');
             }}>
             <Text style={styles.signUp}>
               Don't have an account?{' '}
@@ -160,7 +136,7 @@ const styles = StyleSheet.create({
   },
   textInstruction: {
     alignSelf: 'center',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: 'black',
   },
@@ -192,12 +168,20 @@ const styles = StyleSheet.create({
   },
   signUp: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: 'black',
   },
   signUpLink: {
     color: '#00ced1',
     fontWeight: 'bold',
+  },
+  buttonDisabled: {
+    backgroundColor: '#b0e0e6',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });

@@ -1,18 +1,62 @@
+import Logo from '../components/Logo';
 import React, { useState } from 'react';
+import { useUser } from '../hooks/useUser';
+import { useAuth } from '../hooks/useAuth';
 import { globalStyles } from '../styles/global-styles';
+import LoadingIndicator from '../components/LoadingIndicator';
+import { useEmailValidation } from '../hooks/useEmailValidation';
 import InputTextContainer from '../components/InputTextContainer';
 import { MyStackScreenProps } from '../interfaces/MyStackScreenProps';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Logo from '../components/Logo';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
 export const SignUpScreen = ({ navigation }: MyStackScreenProps) => {
+  const { createUser } = useUser();
+  const { login, loading } = useAuth();
+  const { errorMessage, setErrorMessage, validateEmail } = useEmailValidation();
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
 
-  const handleSignUp = () => {
-    // Add your registration logic here
-    console.log('Sign up button pressed');
+  const handleSignUp = async () => {
+    try {
+      await createUser(emailInput, passwordInput);
+      console.log('User created successfully');
+      await login(emailInput, passwordInput, navigation);
+      Alert.alert('Success', 'User created successfully!', [{ text: 'OK' }]);
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        (error as any).message ||
+          'There was an error creating the user. Please try again.',
+      );
+    }
   };
+
+  const handlePasswordInputChange = (password: string, isConfirm: boolean) => {
+    if (isConfirm) {
+      setConfirmPasswordInput(password);
+      if (passwordInput && password !== passwordInput) {
+        setErrorMessage('Passwords must match');
+      } else {
+        setErrorMessage('');
+      }
+    } else {
+      setPasswordInput(password);
+      if (confirmPasswordInput && password !== confirmPasswordInput) {
+        setErrorMessage('Passwords must match');
+      } else {
+        setErrorMessage('');
+      }
+    }
+  };
+
+  const handleEmailChange = (email: string) => {
+    setEmailInput(email);
+    validateEmail(email);
+  };
+
+  const isFormValid =
+    emailInput && passwordInput && confirmPasswordInput && !errorMessage;
 
   return (
     <View>
@@ -28,7 +72,7 @@ export const SignUpScreen = ({ navigation }: MyStackScreenProps) => {
             style={styles.textContainer}
             iconName="person"
             placeHolder="Email"
-            handleOnChange={setEmailInput}
+            handleOnChange={handleEmailChange}
             value={emailInput}
           />
           <InputTextContainer
@@ -36,19 +80,42 @@ export const SignUpScreen = ({ navigation }: MyStackScreenProps) => {
             iconName="lock-open"
             placeHolder="Password"
             type="password"
-            handleOnChange={setPasswordInput}
+            handleOnChange={password =>
+              handlePasswordInputChange(password, false)
+            }
             value={passwordInput}
           />
-          <TouchableOpacity style={styles.button} onPress={() => handleSignUp()}>
-            <Text style={styles.buttonText}>SIGN UP</Text>
-          </TouchableOpacity>
+          <InputTextContainer
+            style={styles.passwordInputContainer}
+            iconName="lock-open"
+            placeHolder="Confirm new password"
+            type="password"
+            handleOnChange={confirmPassword =>
+              handlePasswordInputChange(confirmPassword, true)
+            }
+            value={confirmPasswordInput}
+          />
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          ) : null}
+          {loading ? (
+            <LoadingIndicator />
+          ) : (
+            <TouchableOpacity
+              style={[styles.button, !isFormValid && styles.buttonDisabled]}
+              onPress={() => handleSignUp()}
+              disabled={!isFormValid}>
+              <Text style={styles.buttonText}>SIGN UP</Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('SignUp');
+              navigation.navigate('LoginScreen');
             }}>
-            <Text style={styles.signUp}>
-              Don't have an account?{' '}
-              <Text style={styles.signUpLink}>Sign Up</Text>
+            <Text style={styles.signIn}>
+              Already have an account?{' '}
+              <Text style={styles.signInLink}>Sign In</Text>
             </Text>
           </TouchableOpacity>
         </View>
@@ -101,13 +168,16 @@ const styles = StyleSheet.create({
     marginVertical: 17,
     borderRadius: 4,
   },
+  buttonDisabled: {
+    backgroundColor: '#b0e0e6',
+  },
   instructionContainer: {
     height: 41,
     marginBottom: 9,
   },
   textInstruction: {
     alignSelf: 'center',
-    fontSize: 30,
+    fontSize: 15,
     fontWeight: '400',
     color: 'black',
   },
@@ -137,14 +207,19 @@ const styles = StyleSheet.create({
     margin: 8,
     marginVertical: 15,
   },
-  signUp: {
+  signIn: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '400',
     color: 'black',
   },
-  signUpLink: {
+  signInLink: {
     color: '#00ced1',
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });
