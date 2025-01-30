@@ -1,10 +1,16 @@
 import { SUPABASE_URL, SUPABASE_KEY } from '@env';
 import { CreateTaskInterface } from '../interfaces/CreateTaskDTO';
 
+interface Result<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
 export const useTask = () => {
   const createTask = async (
     task: CreateTaskInterface,
-  ): Promise<void | undefined> => {
+  ): Promise<Result<void>> => {
     try {
       const url = `${SUPABASE_URL}/Tasks`;
       const response = await fetch(url, {
@@ -18,11 +24,12 @@ export const useTask = () => {
       });
       if (response.status !== 201) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create task');
+        return { success: false, error: errorData.message || 'Failed to create task' };
       }
+      return { success: true };
     } catch (error) {
       console.error('Error creating task:', error);
-      throw error;
+      return { success: false, error: (error as Error).message };
     }
   };
 

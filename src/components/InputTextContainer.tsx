@@ -69,7 +69,7 @@ const InputTextContainer = ({
   }
 
   return (
-    <View style={style}>
+    <View style={[styles.container, style]}>
       <View style={styles.icon}>
         <Icon name={iconName} size={24} color="rgba(0, 0, 0, 0.6)" />
       </View>
@@ -82,6 +82,10 @@ const InputTextContainer = ({
 export default InputTextContainer;
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   icon: {
     height: 56,
     width: 48,
@@ -91,7 +95,7 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     height: 56,
-    width: 330,
+    flex: 1,
     alignSelf: 'center',
     borderBottomWidth: 1,
     borderTopLeftRadius: 4,

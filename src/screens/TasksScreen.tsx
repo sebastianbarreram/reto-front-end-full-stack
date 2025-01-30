@@ -1,8 +1,8 @@
 import {
   Text,
   View,
+  Alert,
   Modal,
-  Button,
   FlatList,
   StyleSheet,
   TouchableOpacity,
@@ -13,7 +13,9 @@ import { useUser } from '../hooks/useUser';
 import { useTask } from '../hooks/useTask';
 import React, { useEffect, useState } from 'react';
 import { setTasks } from '../redux/slices/TasksSlice';
+import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Ionicons';
+import CustomButton from '../components/CustomButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { TaskInterface } from '../interfaces/TaskInterface';
 import InputTextContainer from '../components/InputTextContainer';
@@ -60,17 +62,26 @@ export const TasksScreen = () => {
   };
 
   const handleCreateTask = async () => {
+    if (!description || !priority) {
+      Alert.alert('Validation Error', 'Please fill in all fields.');
+      return;
+    }
+
     try {
       const newTask: CreateTaskInterface = {
         description,
         priority,
         id_user: user.id,
       };
-      await createTask(newTask);
-      // Refresh tasks or update state
-      setModalVisible(false);
-      setDescription('');
-      setPriority('');
+      const result = await createTask(newTask);
+      if (result.success) {
+        // Refresh tasks or update state
+        setModalVisible(false);
+        setDescription('');
+        setPriority('');
+      } else {
+        Alert.alert('Error', result.error || 'Failed to create task');
+      }
     } catch (error) {
       console.error('Error creating task:', error);
     }
@@ -90,7 +101,9 @@ export const TasksScreen = () => {
         <Text>
           "TasksScreen" email: {user.email} id: {user.id}
         </Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setModalVisible(true)}>
           <Icon name="add-circle" size={50} color="#00ced1" />
         </TouchableOpacity>
       </View>
@@ -103,9 +116,11 @@ export const TasksScreen = () => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalView}>
+          <Text style={styles.modalInstruction}>
+            Please fill out the form to create a new task:
+          </Text>
           <InputTextContainer
             style={styles.input}
             iconName="description"
@@ -113,15 +128,28 @@ export const TasksScreen = () => {
             handleOnChange={setDescription}
             value={description}
           />
-          <InputTextContainer
-            style={styles.input}
-            iconName="low-priority"
-            placeHolder="Priority"
-            handleOnChange={setPriority}
-            value={priority}
+          <View style={styles.dropdownContainer}>
+            <Icon name="alert-circle" size={24} color="rgba(0, 0, 0, 0.6)" />
+            <Picker
+              selectedValue={priority}
+              style={styles.dropdown}
+              onValueChange={(priorityValue: string) =>
+                setPriority(priorityValue)
+              }>
+              <Picker.Item label="Highest" value="Highest" />
+              <Picker.Item label="High" value="High" />
+              <Picker.Item label="Medium" value="Medium" />
+              <Picker.Item label="Low" value="Low" />
+              <Picker.Item label="Lowest" value="Lowest" />
+            </Picker>
+          </View>
+          <CustomButton
+            title="Create Task"
+            onPress={handleCreateTask}
+            disabled={!description || !priority}
+            style={styles.button}
           />
-          <Button title="Create Task" onPress={handleCreateTask} />
-          <Button title="Cancel" onPress={() => setModalVisible(false)} />
+          <CustomButton title="Cancel" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>
     </View>
@@ -139,10 +167,10 @@ const styles = StyleSheet.create({
     // Adjust styles as needed
   },
   modalView: {
-    margin: 20,
+    margin: 18,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    padding: 15,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -155,8 +183,36 @@ const styles = StyleSheet.create({
   },
   input: {
     flexDirection: 'row',
+    margin: 8,
+  },
+  button: {
+    marginVertical: 2,
+  },
+  buttonText: {
+    color: 'white',
+    height: 48,
+    textAlignVertical: 'center',
+    fontWeight: '500',
+  },
+  buttonDisabled: {
+    backgroundColor: '#b0e0e6',
+  },
+  modalInstruction: {
+    fontSize: 16,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  dropdownContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     margin: 8,
-    marginVertical: 15,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.38)',
+    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    borderRadius: 4,
+  },
+  dropdown: {
+    flex: 1,
+    height: 56,
   },
 });

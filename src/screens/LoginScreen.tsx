@@ -7,6 +7,7 @@ import { useEmailValidation } from '../hooks/useEmailValidation';
 import InputTextContainer from '../components/InputTextContainer';
 import { MyStackScreenProps } from '../interfaces/MyStackScreenProps';
 import { Text, View, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import CustomButton from '../components/CustomButton';
 
 export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
   const { login, loading } = useAuth();
@@ -64,12 +65,11 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
           {loading ? (
             <LoadingIndicator />
           ) : (
-            <TouchableOpacity
-              style={[styles.button, !isFormValid && styles.buttonDisabled]}
-              onPress={() => handleLogin()}
-              disabled={!isFormValid}>
-              <Text style={styles.buttonText}>LOGIN</Text>
-            </TouchableOpacity>
+            <CustomButton
+              title="LOGIN"
+              onPress={handleLogin}
+              disabled={!isFormValid}
+            />
           )}
           <TouchableOpacity
             onPress={() => {
@@ -95,41 +95,6 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 150,
   },
-  input: {
-    textAlignVertical: 'center',
-    padding: 8,
-    marginLeft: 12,
-    color: 'black',
-    fontSize: 16,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.12)',
-  },
-  containerLine: {
-    flexDirection: 'row',
-    width: '75%',
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
-  textLine: {
-    alignSelf: 'center',
-    paddingHorizontal: 5,
-    fontSize: 12,
-    color: 'rgba(0, 0, 0, 0.6)',
-    fontWeight: '400',
-  },
-  button: {
-    width: '75%',
-    height: 48,
-    alignSelf: 'center',
-    alignItems: 'center',
-    backgroundColor: '#00ced1',
-    marginVertical: 17,
-    borderRadius: 4,
-  },
   instructionContainer: {
     height: 41,
     marginBottom: 9,
@@ -142,17 +107,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-    // backgroundColor: 'blue',
-  },
-  buttonText: {
-    color: 'white',
-    height: 48,
-    textAlignVertical: 'center',
-    fontWeight: '500',
-  },
-  container: {
-    color: 'green',
-    backgroundColor: 'yellow',
   },
   textContainer: {
     flexDirection: 'row',
