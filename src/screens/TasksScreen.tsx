@@ -13,9 +13,9 @@ import { useUser } from '../hooks/useUser';
 import { useTask } from '../hooks/useTask';
 import React, { useEffect, useState } from 'react';
 import { setTasks } from '../redux/slices/TasksSlice';
-import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../components/CustomButton';
+import CustomPicker from '../components/CustomPicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { TaskInterface } from '../interfaces/TaskInterface';
 import InputTextContainer from '../components/InputTextContainer';
@@ -117,39 +117,37 @@ export const TasksScreen = () => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalInstruction}>
-            Please fill out the form to create a new task:
-          </Text>
-          <InputTextContainer
-            style={styles.input}
-            iconName="description"
-            placeHolder="Description"
-            handleOnChange={setDescription}
-            value={description}
-          />
-          <View style={styles.dropdownContainer}>
-            <Icon name="alert-circle" size={24} color="rgba(0, 0, 0, 0.6)" />
-            <Picker
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalInstruction}>
+              Please fill out the form to create a new task:
+            </Text>
+            <InputTextContainer
+              style={styles.input}
+              iconName="description"
+              placeHolder="Description"
+              handleOnChange={setDescription}
+              value={description}
+            />
+            <CustomPicker
               selectedValue={priority}
-              style={styles.dropdown}
-              onValueChange={(priorityValue: string) =>
-                setPriority(priorityValue)
-              }>
-              <Picker.Item label="Highest" value="Highest" />
-              <Picker.Item label="High" value="High" />
-              <Picker.Item label="Medium" value="Medium" />
-              <Picker.Item label="Low" value="Low" />
-              <Picker.Item label="Lowest" value="Lowest" />
-            </Picker>
+              onValueChange={setPriority}
+              items={[
+                { label: 'Highest', value: 'Highest', icon: 'arrow-up-circle' },
+                { label: 'High', value: 'High', icon: 'arrow-up' },
+                { label: 'Medium', value: 'Medium', icon: 'remove-circle' },
+                { label: 'Low', value: 'Low', icon: 'arrow-down' },
+                { label: 'Lowest', value: 'Lowest', icon: 'arrow-down-circle' },
+              ]}
+            />
+            <CustomButton
+              title="Create Task"
+              onPress={handleCreateTask}
+              disabled={!description || !priority}
+              style={styles.button}
+            />
+            <CustomButton title="Cancel" onPress={() => setModalVisible(false)} />
           </View>
-          <CustomButton
-            title="Create Task"
-            onPress={handleCreateTask}
-            disabled={!description || !priority}
-            style={styles.button}
-          />
-          <CustomButton title="Cancel" onPress={() => setModalVisible(false)} />
         </View>
       </Modal>
     </View>
@@ -166,8 +164,14 @@ const styles = StyleSheet.create({
   addButton: {
     // Adjust styles as needed
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent', // Ensure the background is transparent
+  },
   modalView: {
-    margin: 18,
+    width: '80%',
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 15,
@@ -201,18 +205,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
     textAlign: 'center',
-  },
-  dropdownContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    margin: 8,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.38)',
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-    borderRadius: 4,
-  },
-  dropdown: {
-    flex: 1,
-    height: 56,
   },
 });
