@@ -2,23 +2,18 @@ import {
   Text,
   View,
   Alert,
-  Modal,
   FlatList,
-  StyleSheet,
-  TouchableOpacity,
   ListRenderItemInfo,
 } from 'react-native';
 import Task from '../components/Task';
+import HeaderTasksScreen from '../components/HeaderTaskScreen';
 import { useUser } from '../hooks/useUser';
 import { useTask } from '../hooks/useTask';
+import CreateTaskModal from '../components/CreateTaskModal';
 import React, { useEffect, useState } from 'react';
 import { setTasks } from '../redux/slices/TasksSlice';
-import Icon from 'react-native-vector-icons/Ionicons';
-import CustomButton from '../components/CustomButton';
-import CustomPicker from '../components/CustomPicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { TaskInterface } from '../interfaces/TaskInterface';
-import InputTextContainer from '../components/InputTextContainer';
 import { CreateTaskInterface } from '../interfaces/CreateTaskDTO';
 import { AppDispatch, RootState } from '../redux/storage/configStore';
 
@@ -50,16 +45,14 @@ export const TasksScreen = () => {
     fetchTasks();
   }, [dispatch, getUserTasks, user.id, tasks]);
 
-  const renderTasks = ({ item }: ListRenderItemInfo<TaskInterface>) => {
-    return (
-      <Task
-        description={item.description}
-        date={item.created_at}
-        priority={item.priority}
-        id={item.id}
-      />
-    );
-  };
+  const renderTasks = ({ item }: ListRenderItemInfo<TaskInterface>) => (
+    <Task
+      description={item.description}
+      date={item.created_at}
+      priority={item.priority}
+      id={item.id}
+    />
+  );
 
   const handleCreateTask = async () => {
     if (!description || !priority) {
@@ -75,7 +68,6 @@ export const TasksScreen = () => {
       };
       const result = await createTask(newTask);
       if (result.success) {
-        // Refresh tasks or update state
         setModalVisible(false);
         setDescription('');
         setPriority('');
@@ -97,113 +89,21 @@ export const TasksScreen = () => {
 
   return (
     <View>
-      <View style={styles.header}>
-        <Text>
-          "TasksScreen" email: {user.email} id: {user.id}
-        </Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => setModalVisible(true)}>
-          <Icon name="add-circle" size={50} color="#00ced1" />
-        </TouchableOpacity>
-      </View>
+      <HeaderTasksScreen user={user} onAddPress={() => setModalVisible(true)} />
       <FlatList
         data={tasks}
         keyExtractor={item => item.id.toString()}
         renderItem={renderTasks}
       />
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <CreateTaskModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalInstruction}>
-              Please fill out the form to create a new task:
-            </Text>
-            <InputTextContainer
-              style={styles.input}
-              iconName="description"
-              placeHolder="Description"
-              handleOnChange={setDescription}
-              value={description}
-            />
-            <CustomPicker
-              selectedValue={priority}
-              onValueChange={setPriority}
-              items={[
-                { label: 'Highest', value: 'Highest', icon: 'arrow-up-circle' },
-                { label: 'High', value: 'High', icon: 'arrow-up' },
-                { label: 'Medium', value: 'Medium', icon: 'remove-circle' },
-                { label: 'Low', value: 'Low', icon: 'arrow-down' },
-                { label: 'Lowest', value: 'Lowest', icon: 'arrow-down-circle' },
-              ]}
-            />
-            <CustomButton
-              title="Create Task"
-              onPress={handleCreateTask}
-              disabled={!description || !priority}
-              style={styles.button}
-            />
-            <CustomButton title="Cancel" onPress={() => setModalVisible(false)} />
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+        description={description}
+        setDescription={setDescription}
+        priority={priority}
+        setPriority={setPriority}
+        onCreateTask={handleCreateTask}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-  },
-  addButton: {
-    // Adjust styles as needed
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent', // Ensure the background is transparent
-  },
-  modalView: {
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  input: {
-    flexDirection: 'row',
-    margin: 8,
-  },
-  button: {
-    marginVertical: 2,
-  },
-  buttonText: {
-    color: 'white',
-    height: 48,
-    textAlignVertical: 'center',
-    fontWeight: '500',
-  },
-  buttonDisabled: {
-    backgroundColor: '#b0e0e6',
-  },
-  modalInstruction: {
-    fontSize: 16,
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-});
