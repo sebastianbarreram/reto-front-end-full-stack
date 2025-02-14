@@ -1,8 +1,8 @@
 import React from 'react';
-import { LoginScreen } from '../screens/LoginScreen';
-import { TasksScreen } from '../screens/TasksScreen';
-import { SignUpScreen } from '../screens/SignUpScreen';
-import { LaunchScreen } from '../screens/LaunchScreen';
+import { LoginScreen } from '../modules/Login/screens/LoginScreen';
+import { TasksScreen } from '../modules/Tasks/screens/TasksScreen';
+import { SignUpScreen } from '../modules/SignUp/screens/SignUpScreen';
+import { LaunchScreen } from '../modules/Launch/screens/LaunchScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();

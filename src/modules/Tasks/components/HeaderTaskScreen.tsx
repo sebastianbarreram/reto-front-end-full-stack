@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const HeaderTasksScreen = ({ user, onAddPress }: { user: any; onAddPress: () => void }) => (
   <View style={styles.header}>

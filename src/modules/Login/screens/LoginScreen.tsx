@@ -1,13 +1,13 @@
-import Logo from '../components/Logo';
+import Logo from '../../../shared/atoms/Logo';
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { globalStyles } from '../styles/global-styles';
-import LoadingIndicator from '../components/LoadingIndicator';
-import { useEmailValidation } from '../hooks/useEmailValidation';
-import InputTextContainer from '../components/InputTextContainer';
-import { MyStackScreenProps } from '../interfaces/MyStackScreenProps';
+import { globalStyles } from '../../../styles/global-styles';
+import LoadingIndicator from '../../../shared/atoms/LoadingIndicator';
+import { useEmailValidation } from '../../../shared/hooks/useEmailValidation';
+import InputTextContainer from '../../../shared/atoms/InputTextContainer';
+import { MyStackScreenProps } from '../../../shared/interfaces/MyStackScreenProps';
 import { Text, View, Alert, StyleSheet, TouchableOpacity } from 'react-native';
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../../../shared/atoms/CustomButton';
 
 export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
   const { login, loading } = useAuth();

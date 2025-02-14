@@ -1,4 +1,4 @@
-import { TaskInterface } from '../../interfaces/TaskInterface';
+import { TaskInterface } from '../../modules/Tasks/interfaces/TaskInterface';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: TaskInterface[] = [];

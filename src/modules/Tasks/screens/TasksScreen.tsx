@@ -1,29 +1,21 @@
-import {
-  Text,
-  View,
-  Alert,
-  FlatList,
-  ListRenderItemInfo,
-} from 'react-native';
-import Task from '../components/Task';
-import HeaderTasksScreen from '../components/HeaderTaskScreen';
-import { useUser } from '../hooks/useUser';
+import Task from '../atoms/Task';
 import { useTask } from '../hooks/useTask';
-import CreateTaskModal from '../components/CreateTaskModal';
 import React, { useEffect, useState } from 'react';
-import { setTasks } from '../redux/slices/TasksSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { setTasks } from '../../../redux/slices/TasksSlice';
+import CreateTaskModal from '../components/CreateTaskModal';
+import HeaderTasksScreen from '../components/HeaderTaskScreen';
 import { TaskInterface } from '../interfaces/TaskInterface';
 import { CreateTaskInterface } from '../interfaces/CreateTaskDTO';
-import { AppDispatch, RootState } from '../redux/storage/configStore';
+import { AppDispatch, RootState } from '../../../redux/storage/configStore';
+import { Text, View, Alert, FlatList, ListRenderItemInfo } from 'react-native';
 
 export const TasksScreen = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const { tasks } = useSelector((state: RootState) => state.tasks);
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState<boolean>(true);
-  const { getUserTasks } = useUser();
-  const { createTask } = useTask();
+  const { createTask, getUserTasks } = useTask();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
   const [priority, setPriority] = useState<string>('');

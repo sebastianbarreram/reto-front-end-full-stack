@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useUser } from './useUser';
+import { useUser } from '../../../shared/hooks/useUser';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../redux/slices/UserSlice';
-import { AppDispatch } from '../redux/storage/configStore';
+import { setUser } from '../../../redux/slices/UserSlice';
+import { AppDispatch } from '../../../redux/storage/configStore';
 
 export const useAuth = () => {
   const { getUserByEmail } = useUser();

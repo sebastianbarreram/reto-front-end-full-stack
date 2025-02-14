@@ -1,6 +1,5 @@
 import { SUPABASE_URL, SUPABASE_KEY } from '@env';
-import { UserInterface } from '../interfaces/UserInterface';
-import { TaskInterface } from '../interfaces/TaskInterface';
+import { UserInterface } from '../../modules/Login/interfaces/UserInterface';
 
 export const useUser = () => {
   const getUserByEmail = async (
@@ -18,24 +17,6 @@ export const useUser = () => {
       return user;
     } catch (error) {
       console.error('Error fetching user:', error);
-    }
-  };
-
-  const getUserTasks = async (
-    id: string,
-  ): Promise<[TaskInterface] | undefined> => {
-    try {
-      const url = `${SUPABASE_URL}/Tasks?id_user=eq.${id}&select=*`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-          apikey: `${SUPABASE_KEY}`,
-        },
-      });
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
     }
   };
 
@@ -65,5 +46,5 @@ export const useUser = () => {
     }
   };
 
-  return { getUserByEmail, getUserTasks, createUser };
+  return { getUserByEmail, createUser };
 };

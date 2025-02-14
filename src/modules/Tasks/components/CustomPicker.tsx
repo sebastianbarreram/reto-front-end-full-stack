@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import PickerContainer from './atoms/PickerContainer';
-import PickerLabel from './atoms/PickerLabel';
-import PickerItem from './atoms/PickerItem';
-import PickerModal from './atoms/PickerModal';
+import PickerContainer from '../atoms/PickerContainer';
+import PickerLabel from '../atoms/PickerLabel';
+import PickerItem from '../atoms/PickerItem';
+import PickerModal from './PickerModal';
 
 interface CustomPickerProps {
   selectedValue: string;

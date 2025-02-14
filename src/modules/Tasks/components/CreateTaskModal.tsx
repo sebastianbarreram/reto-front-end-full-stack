@@ -1,12 +1,12 @@
 import React from 'react';
-import CustomPicker from './CustomPicker';
-import CustomButton from './CustomButton';
-import ModalView from './atoms/ModalView';
+import ModalView from '../atoms/ModalView';
 import { Modal, StyleSheet } from 'react-native';
-import ModalContainer from './atoms/ModalContainer';
-import { priorityItems } from '../config/priorityItems';
-import InputTextContainer from './InputTextContainer';
-import ModalInstruction from './atoms/ModalInstruction';
+import ModalContainer from '../atoms/ModalContainer';
+import ModalInstruction from '../atoms/ModalInstruction';
+import CustomPicker from './CustomPicker';
+import CustomButton from '../../../shared/atoms/CustomButton';
+import { priorityItems } from '../../../config/priorityItems';
+import InputTextContainer from '../../../shared/atoms/InputTextContainer';
 
 interface TaskModalProps {
   visible: boolean;

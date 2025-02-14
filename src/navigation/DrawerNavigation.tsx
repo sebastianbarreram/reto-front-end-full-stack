@@ -1,7 +1,7 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { LoginScreen } from '../screens/LoginScreen';
-import { LaunchScreen } from '../screens/LaunchScreen';
+import { LoginScreen } from '../modules/Login/screens/LoginScreen';
+import { LaunchScreen } from '../modules/Launch/screens/LaunchScreen';
 
 const Drawer = createDrawerNavigator();
 
