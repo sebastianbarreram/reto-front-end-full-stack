@@ -9,7 +9,7 @@ const PickerLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const styles = StyleSheet.create({
   label: {
-    fontSize: 16,
+    fontSize: 15,
     color: 'black',
     marginBottom: 5,
     marginRight: 10,

@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     marginLeft: 12,
     color: 'black',
-    fontSize: 16,
+    fontSize: 15,
     width: '82%',
   },
 });

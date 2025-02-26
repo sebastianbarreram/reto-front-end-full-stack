@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styles } from '../../../themes/GlobalTheme';
+import useDateFormat from '../../../shared/hooks/useDateFormat';
 
 interface Props {
   id: number;
@@ -10,11 +11,12 @@ interface Props {
 }
 
 const Task = ({ description, date, priority }: Props) => {
+  const { dateFormat } = useDateFormat();
   return (
-    <View style={styles({}).task}>
+    <View style={styles().task}>
       <View>
         <Text numberOfLines={1}>{description}</Text>
-        <Text>{date}</Text>
+        <Text>{dateFormat(date)}</Text>
       </View>
 
       <Text>{priority}</Text>

@@ -13,7 +13,7 @@ const ModalInstruction: React.FC<ModalInstructionProps> = ({ children }) => (
 
 const styles = StyleSheet.create({
   modalInstruction: {
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 10,
     textAlign: 'center',
   },

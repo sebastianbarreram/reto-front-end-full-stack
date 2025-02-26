@@ -12,11 +12,11 @@ const Logo = ({ size }: Props) => {
       style={{
         ...(size
           ? {
-              ...styles({}).logo,
+              ...styles().logo,
               width: size,
               height: size,
             }
-          : styles({}).logo),
+          : styles().logo),
       }}
       source={require('../../assets/images/LogoWallet.png')}
     />

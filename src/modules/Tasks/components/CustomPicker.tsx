@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     width: 200,
   },
   pickerText: {
-    fontSize: 16,
+    fontSize: 15,
     color: 'black',
   },
 });

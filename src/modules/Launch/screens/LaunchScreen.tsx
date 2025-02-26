@@ -10,9 +10,9 @@ export const LaunchScreen = ({ navigation }: MyStackScreenProps) => {
     // setTimeout(() => navigation.navigate('LoginScreen'), 3000);
   });
   return (
-    <View style={styles({}).containerLaunchScreen}>
+    <View style={styles().containerLaunchScreen}>
       <Logo />
-      <Text style={styles({}).titleAppLaunchScreen}>My App</Text>
+      <Text style={styles().titleAppLaunchScreen}>My App</Text>
     </View>
   );
 };
