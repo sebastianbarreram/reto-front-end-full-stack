@@ -3,4 +3,5 @@ export interface UserInterface {
   created_at: string;
   email: string;
   password_hash: string;
+  isAuthenticated: boolean;
 }

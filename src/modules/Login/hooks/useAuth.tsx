@@ -18,8 +18,9 @@ export const useAuth = () => {
         if (user) {
           const isPasswordValid = password === user.password_hash;
           if (isPasswordValid) {
-            dispatch(setUser(user));
-            await navigation.navigate('TasksScreen');
+            const userAuthenticated = { ...user, isAuthenticated: true };
+            dispatch(setUser(userAuthenticated));
+            await navigation.navigate('BottomTabsNavigator');
           } else {
             throw new Error('Invalid email or password');
           }

@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 const HeaderTasksScreen = ({ user, onAddPress }: { user: any; onAddPress: () => void }) => (
   <View style={styles.header}>
     <Text>
-      "TasksScreen" email: {user.email} id: {user.id}
+      Tasks List for email: {user.email} id: {user.id}
     </Text>
     <TouchableOpacity onPress={onAddPress}>
       <Icon name="add-circle" size={50} color="#00ced1" />

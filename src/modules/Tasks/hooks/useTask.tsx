@@ -38,7 +38,7 @@ export const useTask = () => {
   };
 
   const getUserTasks = async (
-    id: string,
+    id: number,
   ): Promise<[TaskInterface] | undefined> => {
     try {
       const url = `${SUPABASE_URL}/Tasks?id_user=eq.${id}&select=*`;

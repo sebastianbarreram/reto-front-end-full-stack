@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserInterface } from '../interfaces/UserInterface';
+import { UserInterface } from '../../modules/Login/interfaces/UserInterface';
 
 const initialState: UserInterface = {
   created_at: '',
   email: '',
   id: 0,
   password_hash: '',
+  isAuthenticated: false,
 };
 
 const UserSlice = createSlice({
