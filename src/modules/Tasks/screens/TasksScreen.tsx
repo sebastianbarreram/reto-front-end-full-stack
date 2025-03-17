@@ -20,6 +20,12 @@ import { TaskInterface } from '../interfaces/TaskInterface';
 import { CreateTaskInterface } from '../interfaces/CreateTaskDTO';
 import { AppDispatch, RootState } from '../../../redux/storage/configStore';
 
+const EmptyListComponent = () => (
+  <View style={styles.emptyContainer}>
+    <Text style={styles.emptyText}>No tasks found</Text>
+  </View>
+);
+
 export const TasksScreen = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const { tasks } = useSelector((state: RootState) => state.tasks);
@@ -92,25 +98,25 @@ export const TasksScreen = () => {
 
   if (loading) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <HeaderTasksScreen user={user} onAddPress={() => setModalVisible(true)} />
+      <HeaderTasksScreen onAddPress={() => setModalVisible(true)} />
       <View style={styles.filterContainer}>
         <CustomPicker
           selectedValue={filterPriority}
           onValueChange={setFilterPriority}
-          items={[
-            ...priorityItems,
-          ]}
+          items={[...priorityItems]}
         />
         {filterPriority && (
-          <TouchableOpacity onPress={clearFilter}>
+          <TouchableOpacity
+            style={styles.clearFilterButton}
+            onPress={clearFilter}>
             <Text style={styles.clearFilterText}>Clear Filter</Text>
           </TouchableOpacity>
         )}
@@ -119,6 +125,7 @@ export const TasksScreen = () => {
         data={filteredTasks}
         keyExtractor={item => item.id.toString()}
         renderItem={renderTasks}
+        ListEmptyComponent={EmptyListComponent}
       />
       <CreateTaskModal
         visible={modalVisible}
@@ -138,17 +145,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'System',
+  },
   filterContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
+    marginVertical: 8,
+  },
+  clearFilterButton: {
+    paddingVertical: 5,
     paddingHorizontal: 10,
-    marginHorizontal: 20,
   },
   clearFilterText: {
     color: '#00ced1',
     textAlign: 'center',
-    marginVertical: 10,
     fontWeight: 'bold',
+    fontSize: 14,
+    fontFamily: 'System',
+  },
+  emptyContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    fontFamily: 'System',
+    textAlign: 'center',
   },
 });

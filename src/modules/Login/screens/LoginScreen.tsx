@@ -69,6 +69,7 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
               title="LOGIN"
               onPress={handleLogin}
               disabled={!isFormValid}
+              style={styles.loginButton}
             />
           )}
           <TouchableOpacity
@@ -101,9 +102,10 @@ const styles = StyleSheet.create({
   },
   textInstruction: {
     alignSelf: 'center',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '400',
-    color: 'black',
+    color: '#333',
+    fontFamily: 'System',
   },
   buttonContainer: {
     alignItems: 'center',
@@ -125,6 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '400',
     color: 'black',
+    marginTop: 20,
   },
   signUpLink: {
     color: '#00ced1',
@@ -137,5 +140,10 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginTop: 10,
+    fontSize: 14,
+    fontFamily: 'System',
   },
+  loginButton:{
+    marginVertical: 20,
+  }
 });

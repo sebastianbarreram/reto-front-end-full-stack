@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     height: 48,
     alignSelf: 'center',
     alignItems: 'center',
-    marginVertical: 17,
+    marginLeft: 12,
     borderRadius: 4,
   },
 });

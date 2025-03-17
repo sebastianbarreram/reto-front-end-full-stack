@@ -69,10 +69,13 @@ const taskStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
+    color: '#333',
+    fontFamily: 'System',
   },
   date: {
     fontSize: 12,
     color: '#666',
+    fontFamily: 'System',
   },
   priorityContainer: {
     flexDirection: 'row',
@@ -81,6 +84,7 @@ const taskStyles = StyleSheet.create({
   priority: {
     marginLeft: 4,
     fontWeight: 'bold',
+    fontFamily: 'System',
   },
 });
 

@@ -109,8 +109,10 @@ const styles = StyleSheet.create({
   input: {
     textAlignVertical: 'center',
     marginLeft: 12,
-    color: 'black',
-    fontSize: 15,
+    color: '#333',
+    fontSize: 16,
     width: '82%',
+    height: 40,
+    fontFamily: 'System',
   },
 });
