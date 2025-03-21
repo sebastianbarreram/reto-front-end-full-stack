@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/storage/configStore';
@@ -9,11 +9,17 @@ import InfoList from '../organisms/InfoList';
 import LogoutButton from '../atoms/LogoutButton';
 import { MyStackScreenProps } from '../../../shared/interfaces/MyStackScreenProps';
 
-export const ProfileScreen: React.FC<MyStackScreenProps> = ({ navigation }) => {
+export const ProfileScreen = ({ navigation }: MyStackScreenProps) => {
   const { user } = useSelector((state: RootState) => state.user);
   const { tasks } = useSelector((state: RootState) => state.tasks);
   const { dateFormat } = useDateFormat();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user.isAuthenticated === false) {
+      navigation.navigate('LaunchScreen');
+    }
+  }, [user, navigation]);
 
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to sign out?', [
@@ -25,8 +31,6 @@ export const ProfileScreen: React.FC<MyStackScreenProps> = ({ navigation }) => {
         text: 'Yes, sign out',
         onPress: () => {
           dispatch(logout());
-          // Navigate to Launch screen after logout
-          navigation.navigate('Launch'); //No funciona
         },
       },
     ]);
