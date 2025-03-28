@@ -19,7 +19,8 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
     } catch (error) {
       Alert.alert(
         'Login error',
-        (error as any).message || 'An unexpected error occurred. Please try logging in again',
+        (error as any).message ||
+          'An unexpected error occurred. Please try logging in again',
       );
     }
   };
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'System',
   },
-  loginButton:{
+  loginButton: {
     marginVertical: 20,
-  }
+  },
 });
