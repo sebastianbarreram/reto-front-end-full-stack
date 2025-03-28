@@ -30,8 +30,6 @@ export const ProfileScreen = ({ navigation }: MyStackScreenProps) => {
       {
         text: 'Yes, sign out',
         onPress: () => {
-          // Navigate first, then logout to prevent UI showing undefined values
-          navigation.navigate('LaunchScreen');
           dispatch(logout());
         },
       },
@@ -39,18 +37,23 @@ export const ProfileScreen = ({ navigation }: MyStackScreenProps) => {
   };
 
   const infoItems = [
-        { icon: 'email', label: 'Email', value: user.email },
-        {
-          icon: 'today',
-          label: 'Member Since',
-          value: dateFormat(user.created_at),
-        },
-        {
-          icon: 'task-alt',
-          label: 'Tasks Created',
-          value: tasks ? tasks.length.toString() : '0',
-        },
-      ];
+    { icon: 'email', label: 'Email', value: user.email },
+    {
+      icon: 'today',
+      label: 'Member Since',
+      value: dateFormat(user.created_at),
+    },
+    {
+      icon: 'task-alt',
+      label: 'Tasks Created',
+      value: tasks ? tasks.length.toString() : '0',
+    },
+  ];
+
+  // Only render the profile content if user is authenticated
+  if (!user || !user.isAuthenticated) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
