@@ -6,13 +6,16 @@ import { MyStackScreenProps } from '../../../shared/interfaces/MyStackScreenProp
 
 export const LaunchScreen = ({ navigation }: MyStackScreenProps) => {
   useEffect(() => {
-    setTimeout(() => navigation.navigate('LoginScreen'), 20);
-    // setTimeout(() => navigation.navigate('LoginScreen'), 3000);
+    setTimeout(() => navigation.navigate('LoginScreen'), 3000);
   });
   return (
-    <View style={styles().containerLaunchScreen}>
+    <View style={styles().containerLaunchScreen} testID="launch-screen">
       <Logo />
-      <Text style={styles().titleAppLaunchScreen}>My App</Text>
+      <Text
+        style={styles().titleAppLaunchScreen}
+        testID="launch-screen-app-title">
+        My App
+      </Text>
     </View>
   );
 };

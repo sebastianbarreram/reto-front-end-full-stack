@@ -5,13 +5,53 @@
 import 'react-native';
 import React from 'react';
 import App from '../App';
+import { render } from '@testing-library/react-native';
 
-// Note: import explicitly to use the types shipped with jest.
-import {it} from '@jest/globals';
+jest.mock('react-redux', () => ({
+  Provider: ({ children }: { children: React.ReactNode }) => children,
+}));
 
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+jest.mock('@react-navigation/native', () => {
+  return {
+    ...jest.requireActual('@react-navigation/native'),
+    NavigationContainer: ({ children }: { children: React.ReactNode }) => (
+      <>{children}</>
+    ),
+  };
+});
 
-it('renders correctly', () => {
-  renderer.create(<App />);
+jest.mock('../src/navigation/RootStack', () => {
+  return {
+    __esModule: true,
+    default: () => <></>,
+  };
+});
+
+// Add a store mock
+jest.mock(
+  '../src/store',
+  () => ({
+    store: {
+      getState: () => ({}),
+      dispatch: jest.fn(),
+      subscribe: jest.fn(),
+    },
+  }),
+  { virtual: true },
+);
+
+describe('App', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders correctly', () => {
+      const result = render(<App />);
+      expect(result).toBeTruthy();
+  });
+  it('matches snapshot', () => {
+    const { toJSON } = render(<App />);
+    // Update the snapshot by adding an assertion
+    expect(toJSON()).toMatchSnapshot();
+  });
 });
