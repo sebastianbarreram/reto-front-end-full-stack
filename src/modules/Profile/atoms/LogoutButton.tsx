@@ -13,6 +13,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ onPress }) => {
       onPress={onPress}
       style={styles.logoutButton}
       textStyle={styles.logoutText}
+      toggleTestID="logout-button"
     />
   );
 };

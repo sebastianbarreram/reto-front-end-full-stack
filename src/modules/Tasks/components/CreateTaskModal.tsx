@@ -70,12 +70,14 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
               title="Create Task"
               onPress={onCreateTask}
               disabled={!description || !priority}
-            />
+              toggleTestID="create-task-button"
+              />
             <CustomButton
               title="Cancel"
               onPress={handleClose}
               style={styles.cancelButton}
               textStyle={styles.cancelButtonText}
+              toggleTestID="cancel-task-button"
             />
           </View>
         </ModalView>

@@ -106,6 +106,7 @@ export const SignUpScreen = ({ navigation }: MyStackScreenProps) => {
               title="SIGN UP"
               onPress={handleSignUp}
               disabled={!isFormValid}
+              toggleTestID="signup-button"
             />
           )}
 

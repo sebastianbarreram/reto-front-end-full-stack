@@ -18,7 +18,7 @@ const HeaderTasksScreen: React.FC<HeaderTasksScreenProps> = ({
   return (
     <View style={styles.header}>
       <Text style={styles.headerText}>Welcome, {username}</Text>
-      <TouchableOpacity onPress={onAddPress}>
+      <TouchableOpacity onPress={onAddPress} testID="add-task-button">
         <Icon name="add-circle" size={50} color="#00ced1" />
       </TouchableOpacity>
     </View>

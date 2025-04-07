@@ -14,6 +14,7 @@ interface CustomButtonProps {
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  toggleTestID?: string;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -22,12 +23,14 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   disabled,
   style,
   textStyle,
+  toggleTestID,
 }) => {
   return (
     <TouchableOpacity
       style={[styles.button, disabled && styles.buttonDisabled, style]}
       onPress={onPress}
-      disabled={disabled}>
+      disabled={disabled}
+      testID={toggleTestID}>
       <Text style={[styles.buttonText, textStyle]}>{title.toUpperCase()}</Text>
     </TouchableOpacity>
   );
