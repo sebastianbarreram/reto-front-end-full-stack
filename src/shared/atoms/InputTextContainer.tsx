@@ -23,6 +23,7 @@ interface Props {
     e: NativeSyntheticEvent<TextInputEndEditingEventData>,
   ) => void;
   value: string;
+  toggleTestID?: string;
 }
 
 const InputTextContainer = ({
@@ -33,6 +34,7 @@ const InputTextContainer = ({
   handleOnChange,
   validateInput,
   value,
+  toggleTestID,
 }: Props) => {
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     usePasswordVisibility();
@@ -61,7 +63,7 @@ const InputTextContainer = ({
           onChangeText={handleOnChange}
           onEndEditing={validateInput}
         />
-        <Pressable onPress={handlePasswordVisibility}>
+        <Pressable onPress={handlePasswordVisibility} testID={toggleTestID}>
           <IconComunity name={rightIcon} size={22} color="#232323" />
         </Pressable>
       </>

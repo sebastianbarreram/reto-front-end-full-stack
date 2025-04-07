@@ -59,6 +59,7 @@ export const LoginScreen = ({ navigation }: MyStackScreenProps) => {
             type="password"
             handleOnChange={setPasswordInput}
             value={passwordInput}
+            toggleTestID="toggle-password-visibility"
           />
           {errorMessage ? (
             <Text style={styles.errorText}>{errorMessage}</Text>
