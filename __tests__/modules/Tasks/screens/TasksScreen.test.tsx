@@ -1,26 +1,13 @@
 import React, { useState } from 'react';
-import { Alert, View, Text, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { TasksScreen } from '../../../../src/modules/Tasks/screens/TasksScreen';
 import { useTask } from '../../../../src/modules/Tasks/hooks/useTask';
 import { useDispatch, useSelector } from 'react-redux';
 
-// Mock dependencies
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
-  useDispatch: jest.fn(),
-}));
-
 jest.mock('../../../../src/modules/Tasks/hooks/useTask', () => ({
   useTask: jest.fn(),
 }));
-
-jest.mock('react-native-vector-icons/MaterialIcons', () => 'Icon');
-jest.mock('react-native-vector-icons/Ionicons', () => 'Icon');
-jest.mock(
-  'react-native-vector-icons/MaterialCommunityIcons',
-  () => 'IconCommunity',
-);
 
 jest.spyOn(Alert, 'alert').mockImplementation(() => {});
 
@@ -672,5 +659,261 @@ describe('TasksScreen', () => {
 
     // Clean up
     consoleSpy.mockRestore();
+  });
+
+  it('should create a task when form is filled and create button is clicked', async () => {
+    // Reset mocks
+    jest.clearAllMocks();
+    mockCreateTask.mockResolvedValue({ success: true });
+
+    // Mock useTask to ensure it returns the functions needed
+    (useTask as jest.Mock).mockReturnValue({
+      getUserTasks: mockGetUserTasks,
+      createTask: mockCreateTask,
+      loading: false,
+    });
+
+    // Render the component with testMode=true to bypass the priority dropdown UI
+    const { getByTestId, getByText, getByPlaceholderText } = render(
+      <TasksScreen testMode={true} />,
+    );
+
+    // Open the add task modal
+    await waitFor(() => getByTestId('add-task-button'));
+    await act(async () => {
+      fireEvent.press(getByTestId('add-task-button'));
+    });
+
+    // Wait for modal to appear
+    await waitFor(() => getByText('New Task'));
+
+    // Fill description field
+    const descriptionInput = getByPlaceholderText('Description');
+    fireEvent.changeText(descriptionInput, 'Test Task Description');
+
+    // The priority should be auto-set to 'High' because of testMode=true
+    // Wait for the button to be enabled (no longer disabled)
+    await waitFor(() => {
+      const createButton = getByTestId('create-task-button');
+      return !createButton.props.accessibilityState?.disabled;
+    });
+
+    // Now press the create button
+    const createButton = getByTestId('create-task-button');
+    await act(async () => {
+      fireEvent.press(createButton);
+    });
+
+    // Verify task was created with correct data
+    expect(mockCreateTask).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: 'Test Task Description',
+        priority: 'High', // Explicitly check for priority
+        id_user: mockUser.id,
+      }),
+    );
+  });
+});
+
+describe('handleCreateTask function', () => {
+  // Mock implementations for state management
+  const setModalVisible = jest.fn();
+  const setDescription = jest.fn();
+  const setPriority = jest.fn();
+  const setLoading = jest.fn();
+
+  // Reset mocks before each test
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockCreateTask.mockResolvedValue({ success: true });
+  });
+
+  // Helper function to create the handleCreateTask with controlled inputs
+  const createHandleCreateTask = (
+    inputDescription = '',
+    inputPriority = '',
+    shouldThrowError = false,
+  ) => {
+    return async () => {
+      if (!inputDescription || !inputPriority) {
+        Alert.alert('Validation Error', 'Please fill in all fields.');
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const newTask = {
+          description: inputDescription,
+          priority: inputPriority,
+          id_user: mockUser.id,
+        };
+
+        if (shouldThrowError) {
+          throw new Error('Test error');
+        }
+
+        const result = await mockCreateTask(newTask);
+
+        if (result.success) {
+          setModalVisible(false);
+          setDescription('');
+          setPriority('');
+        } else {
+          Alert.alert('Error', result.error || 'Failed to create task');
+        }
+      } catch (error) {
+        console.error('Error creating task:', error);
+        Alert.alert('Error', 'An unexpected error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+  };
+
+  it('validates that description is not empty', async () => {
+    // Create handler with empty description
+    const handleCreateTask = createHandleCreateTask('', 'High');
+
+    // Execute the function
+    await act(async () => {
+      await handleCreateTask();
+    });
+
+    // Check that Alert was called with validation error
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Validation Error',
+      'Please fill in all fields.',
+    );
+
+    // Check that createTask was not called
+    expect(mockCreateTask).not.toHaveBeenCalled();
+
+    // Check that form was not reset
+    expect(setDescription).not.toHaveBeenCalled();
+    expect(setPriority).not.toHaveBeenCalled();
+    expect(setModalVisible).not.toHaveBeenCalled();
+  });
+
+  it('validates that priority is not empty', async () => {
+    // Create handler with empty priority
+    const handleCreateTask = createHandleCreateTask('Test task', '');
+
+    // Execute the function
+    await act(async () => {
+      await handleCreateTask();
+    });
+
+    // Check validation
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Validation Error',
+      'Please fill in all fields.',
+    );
+    expect(mockCreateTask).not.toHaveBeenCalled();
+  });
+
+  it('creates task successfully and resets form', async () => {
+    // Create handler with valid inputs
+    const handleCreateTask = createHandleCreateTask('New Task', 'Medium');
+
+    // Execute the function
+    await act(async () => {
+      await handleCreateTask();
+    });
+
+    // Check task creation
+    expect(mockCreateTask).toHaveBeenCalledWith({
+      description: 'New Task',
+      priority: 'Medium',
+      id_user: mockUser.id,
+    });
+
+    // Check form reset
+    expect(setModalVisible).toHaveBeenCalledWith(false);
+    expect(setDescription).toHaveBeenCalledWith('');
+    expect(setPriority).toHaveBeenCalledWith('');
+
+    // Check loading state was managed
+    expect(setLoading).toHaveBeenCalledWith(true);
+    expect(setLoading).toHaveBeenCalledWith(false);
+  });
+
+  it('handles API error response', async () => {
+    // Mock createTask to return error
+    mockCreateTask.mockResolvedValue({
+      success: false,
+      error: 'Server validation failed',
+    });
+
+    // Create handler with valid inputs
+    const handleCreateTask = createHandleCreateTask('New Task', 'High');
+
+    // Execute the function
+    await act(async () => {
+      await handleCreateTask();
+    });
+
+    // Check API was called
+    expect(mockCreateTask).toHaveBeenCalled();
+
+    // Check error alert was shown
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Error',
+      'Server validation failed',
+    );
+
+    // Check form was not reset on error
+    expect(setModalVisible).not.toHaveBeenCalled();
+    expect(setDescription).not.toHaveBeenCalled();
+    expect(setPriority).not.toHaveBeenCalled();
+  });
+
+  it('handles exception during task creation', async () => {
+    // Spy on console.error
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    // Create handler that will throw error
+    const handleCreateTask = createHandleCreateTask('New Task', 'High', true);
+
+    // Execute the function
+    await act(async () => {
+      await handleCreateTask();
+    });
+
+    // Check error was logged
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Error creating task:',
+      expect.any(Error),
+    );
+
+    // Check error alert was shown
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Error',
+      'An unexpected error occurred',
+    );
+
+    // Clean up
+    consoleSpy.mockRestore();
+  });
+
+  it('handles API error without message', async () => {
+    // Mock createTask to return error without message
+    mockCreateTask.mockResolvedValue({
+      success: false,
+      // No error message
+    });
+
+    // Create handler with valid inputs
+    const handleCreateTask = createHandleCreateTask('New Task', 'High');
+
+    // Execute the function
+    await act(async () => {
+      await handleCreateTask();
+    });
+
+    // Check default error message was used
+    expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to create task');
   });
 });

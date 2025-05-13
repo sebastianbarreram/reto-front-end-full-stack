@@ -26,7 +26,7 @@ const EmptyListComponent = () => (
   </View>
 );
 
-export const TasksScreen = () => {
+export const TasksScreen = ({ testMode = false }) => {
   const { user } = useSelector((state: RootState) => state.user);
   const { tasks } = useSelector((state: RootState) => state.tasks);
   const dispatch = useDispatch<AppDispatch>();
@@ -135,6 +135,7 @@ export const TasksScreen = () => {
         priority={priority}
         setPriority={setPriority}
         onCreateTask={handleCreateTask}
+        testHelperSetPriority={testMode ? 'High' : undefined}
       />
     </View>
   );

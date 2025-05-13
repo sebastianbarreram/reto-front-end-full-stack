@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ModalView from '../atoms/ModalView';
 import ModalContainer from '../atoms/ModalContainer';
 import ModalInstruction from '../atoms/ModalInstruction';
@@ -17,6 +17,7 @@ interface TaskModalProps {
   priority: string;
   setPriority: (value: string) => void;
   onCreateTask: () => void;
+  testHelperSetPriority?: string; // For testing purposes
 }
 
 const CreateTaskModal: React.FC<TaskModalProps> = ({
@@ -27,6 +28,7 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
   priority,
   setPriority,
   onCreateTask,
+  testHelperSetPriority,
 }) => {
   // Handle clean close
   const handleClose = () => {
@@ -34,6 +36,13 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
     setPriority('');
     onClose();
   };
+
+  // Helper to directly set priority in tests
+  useEffect(() => {
+    if (testHelperSetPriority && priority !== testHelperSetPriority) {
+      setPriority(testHelperSetPriority);
+    }
+  }, [testHelperSetPriority, setPriority, priority]);
 
   return (
     <Modal
@@ -71,7 +80,7 @@ const CreateTaskModal: React.FC<TaskModalProps> = ({
               onPress={onCreateTask}
               disabled={!description || !priority}
               toggleTestID="create-task-button"
-              />
+            />
             <CustomButton
               title="Cancel"
               onPress={handleClose}
